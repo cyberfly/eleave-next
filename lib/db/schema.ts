@@ -5,8 +5,9 @@ import {
   text,
   timestamp,
   integer,
+  date,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { not, relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -66,6 +67,19 @@ export const invitations = pgTable('invitations', {
     .references(() => users.id),
   invitedAt: timestamp('invited_at').notNull().defaultNow(),
   status: varchar('status', { length: 20 }).notNull().default('pending'),
+});
+
+export const leave_applications = pgTable('leave_applications', {
+  id: serial('id').primaryKey(),
+  description: varchar('name', { length: 255 }).notNull(),
+  start_date: date(),
+  end_date: date(),
+  status: varchar('status', { length: 20 }).notNull().default('pending'),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  approvalBy: integer('approval_by')
+    .references(() => users.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const teamsRelations = relations(teams, ({ many }) => ({
