@@ -1,0 +1,1 @@
+ALTER TABLE "leave_applications" ADD COLUMN "leave_type" varchar(20) DEFAULT 'annual' NOT NULL;

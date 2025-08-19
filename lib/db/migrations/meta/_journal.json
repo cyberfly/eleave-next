@@ -22,6 +22,13 @@
       "when": 1755588603210,
       "tag": "0002_curvy_domino",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1755591203665,
+      "tag": "0003_needy_hex",
+      "breakpoints": true
     }
   ]
 }
