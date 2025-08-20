@@ -16,6 +16,7 @@ export default function DashboardLayout({
 
   const navItems = [
     { href: '/dashboard/leaves', icon: Users, label: 'Manage Leave' },
+    { href: '/dashboard/leaves/apply', icon: Users, label: 'Apply Leave' },
     // { href: '/dashboard', icon: Users, label: 'Team' },
     // { href: '/dashboard/general', icon: Settings, label: 'General' },
     // { href: '/dashboard/activity', icon: Activity, label: 'Activity' },

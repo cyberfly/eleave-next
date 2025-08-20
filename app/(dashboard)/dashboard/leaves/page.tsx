@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUserLeaves } from "@/lib/actions/leave_actions";
 
@@ -26,7 +27,7 @@ export default async function LeavesPage() {
                 <th>Action</th>
             </tr>
 
-            {user_leaves.map((leave_row, index) => (
+            {user_leaves.map((leave_row, index) => ( 
 
             <tr>
                 <td>{leave_row.description}</td>
