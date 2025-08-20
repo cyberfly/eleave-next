@@ -273,3 +273,52 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Basic Bootstrap table equivalent */
+.table {
+  @apply w-full border-collapse;
+}
+
+.table th,
+.table td {
+  @apply px-3 py-2 border-b border-gray-200 text-left;
+}
+
+.table thead th {
+  @apply bg-gray-50 font-medium text-gray-900 border-b-2 border-gray-200;
+}
+
+.table tbody tr:hover {
+  @apply bg-gray-50;
+}
+
+/* Bootstrap table-striped equivalent */
+.table-striped tbody tr:nth-child(odd) {
+  @apply bg-gray-50;
+}
+
+/* Bootstrap table-bordered equivalent */
+.table-bordered {
+  @apply border border-gray-200;
+}
+
+.table-bordered th,
+.table-bordered td {
+  @apply border border-gray-200;
+}
+
+/* Bootstrap table-hover equivalent */
+.table-hover tbody tr:hover {
+  @apply bg-gray-100;
+}
+
+/* Bootstrap table-sm equivalent */
+.table-sm th,
+.table-sm td {
+  @apply px-2 py-1;
+}
+
+/* Bootstrap table-responsive equivalent */
+.table-responsive {
+  @apply overflow-x-auto;
+}

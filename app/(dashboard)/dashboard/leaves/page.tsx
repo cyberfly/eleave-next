@@ -14,7 +14,36 @@ export default async function LeavesPage() {
         <CardHeader>
           <CardTitle>Your Leave Applications</CardTitle>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+
+        <table className="table">
+            <tr>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            {user_leaves.map((leave_row, index) => (
+
+            <tr>
+                <td>{leave_row.description}</td>
+                <td>{leave_row.leave_type}</td>
+                <td>{leave_row.start_date}</td>
+                <td>{leave_row.end_date}</td>
+                <td>{leave_row.status}</td>
+                <td>
+
+                </td>
+            </tr>
+
+            ))}
+
+        </table>
+
+        </CardContent>
       </Card>
     </>
   );

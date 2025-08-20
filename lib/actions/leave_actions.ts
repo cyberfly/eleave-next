@@ -16,5 +16,5 @@ export async function getUserLeaves() {
       .from(leave_applications)
       .where(eq(leave_applications.userId, user.id));
   
-    return result.length > 0 ? result[0] : null;
+    return result.length > 0 ? result : null;
 }
