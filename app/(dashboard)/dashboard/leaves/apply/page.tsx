@@ -22,7 +22,13 @@ export default function ApplyLeavePage() {
         <div className="form-group">
           <label htmlFor="leave_type">Leave Type</label>
 
-          <select name="leave_type" id="leave_type" className="form-control">
+          <select
+            name="leave_type"
+            id="leave_type"
+            className="form-control"
+            key={state.data?.leave_type || "default"}
+            defaultValue={state.data?.leave_type?.toString() || ""}
+          >
             <option value="">Select Type</option>
             {/* TODO: change to dynamic  */}
             <option value="annual">Annual Leave</option>
@@ -45,6 +51,7 @@ export default function ApplyLeavePage() {
             name="description"
             id="description"
             className="form-control"
+            defaultValue={state.data?.description?.toString() || ""}
           ></textarea>
 
           {state.errors?.description && (
@@ -59,6 +66,7 @@ export default function ApplyLeavePage() {
             name="start_date"
             id="start_date"
             className="form-control"
+            defaultValue={state.data?.start_date?.toString() || ""}
           />
 
           {state.errors?.start_date && (
@@ -73,6 +81,7 @@ export default function ApplyLeavePage() {
             name="end_date"
             id="end_date"
             className="form-control"
+            defaultValue={state.data?.end_date?.toString() || ""}
           />
 
           {state.errors?.end_date && (
@@ -81,10 +90,12 @@ export default function ApplyLeavePage() {
         </div>
 
         <div className="form-group">
-          <button 
-           disabled={pending}
-           type="submit" className="btn btn-primary btn-lg">
-            {pending ? 'Submitting ...' : 'Submit'}
+          <button
+            disabled={pending}
+            type="submit"
+            className="btn btn-primary btn-lg"
+          >
+            {pending ? "Submitting ..." : "Submit"}
           </button>
         </div>
       </form>

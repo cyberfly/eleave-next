@@ -42,11 +42,6 @@ export async function storeLeaveApplication(
     throw new Error("User not authenticated");
   }
 
-  // simulate delay to demonstrate loading state
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  await sleep(2000);
-  //   end simulate delay
-
   const leave_type = formData.get("leave_type") as string;
   const description = formData.get("description") as string;
   const start_date = formData.get("start_date") as string;
