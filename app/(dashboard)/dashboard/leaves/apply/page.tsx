@@ -1,16 +1,27 @@
 "use client";
 import { storeLeaveApplication } from "@/lib/actions/leave_actions";
+import { useActionState } from "react";
 
-export default function ApplyLeavePage() {  
+const initialState = {
+  success: false,
+  errors: {},
+  data: null,
+};
+
+export default function ApplyLeavePage() {
+  const [state, formAction, pending] = useActionState(
+    storeLeaveApplication,
+    initialState
+  );
+
   return (
     <>
       <h3 className="mb-8 text-2xl font-bold">Apply Leave</h3>
 
-      <form action={storeLeaveApplication}>
-
+      <form action={formAction}>
         <div className="form-group">
           <label htmlFor="leave_type">Leave Type</label>
-          
+
           <select name="leave_type" id="leave_type" className="form-control">
             <option value="">Select Type</option>
             {/* TODO: change to dynamic  */}
@@ -20,7 +31,11 @@ export default function ApplyLeavePage() {
             <option value="paternity">Paternity Leave</option>
             <option value="compassionate">Compassionate Leave</option>
             <option value="unpaid">Unpaid Leave</option>
-          </select> 
+          </select>
+
+          {state.errors?.leave_type && (
+            <p className="text-red-500">{state.errors.leave_type[0]}</p>
+          )}
         </div>
 
         <div className="form-group">
@@ -31,6 +46,10 @@ export default function ApplyLeavePage() {
             id="description"
             className="form-control"
           ></textarea>
+
+          {state.errors?.description && (
+            <p className="text-red-500">{state.errors.description[0]}</p>
+          )}
         </div>
 
         <div className="form-group">
@@ -41,6 +60,10 @@ export default function ApplyLeavePage() {
             id="start_date"
             className="form-control"
           />
+
+          {state.errors?.start_date && (
+            <p className="text-red-500">{state.errors.start_date[0]}</p>
+          )}
         </div>
 
         <div className="form-group">
@@ -51,13 +74,19 @@ export default function ApplyLeavePage() {
             id="end_date"
             className="form-control"
           />
+
+          {state.errors?.end_date && (
+            <p className="text-red-500">{state.errors.end_date[0]}</p>
+          )}
         </div>
 
-
         <div className="form-group">
-            <button type="submit" className="btn btn-primary btn-lg">Submit</button>    
-        </div>       
-
+          <button 
+           disabled={pending}
+           type="submit" className="btn btn-primary btn-lg">
+            {pending ? 'Submitting ...' : 'Submit'}
+          </button>
+        </div>
       </form>
     </>
   );

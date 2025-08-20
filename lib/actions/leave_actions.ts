@@ -31,13 +31,21 @@ export async function getUserLeaves() {
   return result.length > 0 ? result : null;
 }
 
-export async function storeLeaveApplication(formData: FormData) {
+export async function storeLeaveApplication(
+  prevState: any,
+  formData: FormData
+) {
   console.log("Storing leave application...");
 
   const user = await getUser();
   if (!user) {
     throw new Error("User not authenticated");
   }
+
+  // simulate delay to demonstrate loading state
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  await sleep(2000);
+  //   end simulate delay
 
   const leave_type = formData.get("leave_type") as string;
   const description = formData.get("description") as string;
@@ -58,7 +66,15 @@ export async function storeLeaveApplication(formData: FormData) {
 
   if (!validate_result.success) {
     console.error("Validation errors:", validate_result.error.errors);
-    return;
+
+    // return this object to show errors in the UI
+    // also shown back the previous form data
+
+    return {
+      success: false,
+      errors: validate_result.error.flatten().fieldErrors,
+      data: leave_data,
+    };
   }
 
   const latest_leave = await db
