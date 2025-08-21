@@ -11,7 +11,7 @@ export default async function LeaveApprovalDetailPage(props) {
     <>
       <h3>Detail</h3>
 
-      <LeaveApprovalForm />
+      <LeaveApprovalForm leaveId={id} />
     </>
   );
 }

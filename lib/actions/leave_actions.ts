@@ -18,6 +18,12 @@ const LeaveApplicationFormRequest = z.object({
   end_date: z.string().date().min(1, "End Date is required"),
 });
 
+const LeaveApprovalFormRequest = z.object({
+  status: z.string().min(1, "Status is required"),
+  remark: z.string().min(1, "Remark is required"),
+  leave_application_id: z.string().min(1, "leave_application_id is required"),
+});
+
 export async function getUserLeaves() {
   console.log("Fetching user leaves...");
 
@@ -97,22 +103,66 @@ export async function getMemberLeaveApplications() {
     throw new Error("User not authenticated");
   }
 
-  const status = 'pending';
+  const status = "pending";
 
   const result = await db
     .select()
     .from(leave_applications)
     .leftJoin(users, eq(leave_applications.userId, users.id))
     .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
-    .where(and(
-      eq(users.role, 'member'),
-      eq(leave_applications.status, status)
-    ))
+    .where(and(eq(users.role, "member"), eq(leave_applications.status, status)))
     .orderBy(asc(leave_applications.createdAt));
 
   return result.length > 0 ? result : null;
 }
 
-export async function storeLeaveApproval() {
-    console.log("Storing leave approval...");
+export async function storeLeaveApproval(prevState: any, formData: FormData) {
+  console.log("Storing leave approval...");
+
+  console.log("formData", formData);
+
+  const user = await getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const status = formData.get("status") as string;
+  const remark = formData.get("remark") as string;
+  const leave_application_id = formData.get("leave_application_id") as string;
+
+  const form_payload = {
+    status: status,
+    remark: remark,
+    leave_application_id: leave_application_id,
+  };
+
+  const validate_result = LeaveApprovalFormRequest.safeParse(form_payload);
+
+  if (!validate_result.success) {
+    console.error("Validation errors:", validate_result.error.errors);
+
+    // return this object to show errors in the UI
+    // also shown back the previous form data
+
+    return {
+      success: false,
+      errors: validate_result.error.flatten().fieldErrors,
+      data: form_payload,
+    };
+  }
+
+  // on succes, update the leave application status
+
+  const update_payload = {
+    status: status,
+    approvalBy: user.id,
+  };
+
+  await db
+    .update(leave_applications)
+    .set(update_payload)
+    .where(eq(leave_applications.id, leave_application_id));
+
+  revalidatePath("/dashboard/leave_approvals");
+  redirect("/dashboard/leave_approvals");
 }

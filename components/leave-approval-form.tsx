@@ -9,7 +9,9 @@ const initialState = {
   data: null,
 };
 
-const LeaveApprovalForm = () => {
+const LeaveApprovalForm = (props) => {
+  const { leaveId } = props;
+
   const [state, formAction, pending] = useActionState(
     storeLeaveApproval,
     initialState
@@ -18,6 +20,8 @@ const LeaveApprovalForm = () => {
   return (
     <>
       <form action={formAction}>
+        <input type="hidden" name="leave_application_id" value={leaveId} />
+
         <div className="form-group">
           <label htmlFor="remark">Remark</label>
           <textarea
@@ -25,8 +29,11 @@ const LeaveApprovalForm = () => {
             id="remark"
             className="form-control"
             placeholder="Enter your remark here"
-            required
           ></textarea>
+
+          {state.errors?.remark && (
+            <p className="text-red-500">{state.errors.remark[0]}</p>
+          )}
         </div>
 
         <div className="form-group">
