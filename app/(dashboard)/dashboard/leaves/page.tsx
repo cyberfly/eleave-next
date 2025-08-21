@@ -23,6 +23,7 @@ export default async function LeavesPage() {
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Status</th>
+                <th>Approval By</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -31,11 +32,12 @@ export default async function LeavesPage() {
               {user_leaves &&
                 user_leaves.map((leave_row, index) => (
                   <tr key={index}>
-                    <td>{leave_row.description}</td>
-                    <td>{leave_row.leave_type}</td>
-                    <td>{leave_row.start_date}</td>
-                    <td>{leave_row.end_date}</td>
-                    <td>{leave_row.status}</td>
+                    <td>{leave_row.leave_applications.description}</td>
+                    <td>{leave_row.leave_applications.leave_type}</td>
+                    <td>{leave_row.leave_applications.start_date}</td>
+                    <td>{leave_row.leave_applications.end_date}</td>
+                    <td>{leave_row.leave_applications.status}</td>
+                    <td>{leave_row.approver?.name || '-'}</td>
                     <td></td>
                   </tr>
                 ))}
