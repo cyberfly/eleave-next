@@ -31,7 +31,8 @@ export async function getUserLeaves() {
     .from(leave_applications)
     .leftJoin(users, eq(leave_applications.userId, users.id))
     .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
-    .where(eq(leave_applications.userId, user.id));
+    .where(eq(leave_applications.userId, user.id))
+    .orderBy(desc(leave_applications.createdAt));
 
   return result.length > 0 ? result : null;
 }
