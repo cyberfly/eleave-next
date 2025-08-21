@@ -112,3 +112,7 @@ export async function getMemberLeaveApplications() {
 
   return result.length > 0 ? result : null;
 }
+
+export async function storeLeaveApproval() {
+    console.log("Storing leave approval...");
+}
