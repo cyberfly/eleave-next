@@ -155,6 +155,7 @@ export async function storeLeaveApproval(prevState: any, formData: FormData) {
 
   const update_payload = {
     status: status,
+    remark: remark,
     approvalBy: user.id,
   };
 
