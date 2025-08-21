@@ -29,6 +29,13 @@
       "when": 1755591203665,
       "tag": "0003_needy_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1755765071347,
+      "tag": "0004_large_blindfold",
+      "breakpoints": true
     }
   ]
 }

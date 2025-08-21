@@ -76,6 +76,7 @@ export const leave_applications = pgTable('leave_applications', {
   end_date: date(),
   status: varchar('status', { length: 20 }).notNull().default('pending'),
   leave_type: varchar('leave_type', { length: 20 }).notNull().default('annual'),
+  remark: text('remark'),
   userId: integer('user_id').references(() => users.id).notNull(),
   approvalBy: integer('approval_by')
     .references(() => users.id),
