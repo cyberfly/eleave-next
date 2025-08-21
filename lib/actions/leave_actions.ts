@@ -1,6 +1,6 @@
 "use server";
 
-import { desc, and, eq, isNull } from "drizzle-orm";
+import { desc, asc, and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
 import { users, leave_applications } from "@/lib/db/schema";
 import { getUser } from "@/lib/db/queries";
@@ -87,4 +87,28 @@ export async function storeLeaveApplication(
 
   revalidatePath("/dashboard/leaves");
   redirect("/dashboard/leaves");
+}
+
+export async function getMemberLeaveApplications() {
+  console.log("Fetching member leave applications...");
+
+  const user = await getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const status = 'pending';
+
+  const result = await db
+    .select()
+    .from(leave_applications)
+    .leftJoin(users, eq(leave_applications.userId, users.id))
+    .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
+    .where(and(
+      eq(users.role, 'member'),
+      eq(leave_applications.status, status)
+    ))
+    .orderBy(asc(leave_applications.createdAt));
+
+  return result.length > 0 ? result : null;
 }
