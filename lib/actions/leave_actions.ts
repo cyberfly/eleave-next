@@ -97,22 +97,21 @@ export async function getMemberLeaveApplications() {
     throw new Error("User not authenticated");
   }
 
-  const status = 'pending';
+  const status = "pending";
 
   const result = await db
     .select()
     .from(leave_applications)
     .leftJoin(users, eq(leave_applications.userId, users.id))
     .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
-    .where(and(
-      eq(users.role, 'member'),
-      eq(leave_applications.status, status)
-    ))
+    .where(and(eq(users.role, "member"), eq(leave_applications.status, status)))
     .orderBy(asc(leave_applications.createdAt));
 
   return result.length > 0 ? result : null;
 }
 
-export async function storeLeaveApproval() {
-    console.log("Storing leave approval...");
+export async function storeLeaveApproval(prevState: any, formData: FormData) {
+  console.log("Storing leave approval...");
+
+  console.log("formData:", formData);
 }
