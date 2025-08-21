@@ -7,6 +7,7 @@ import { getUser } from "@/lib/db/queries";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import * as z from "zod";
+import { alias } from "drizzle-orm/pg-core";
 
 const LeaveApplicationFormRequest = z.object({
   leave_type: z.string().min(1, "Leave type is required"),
@@ -14,6 +15,8 @@ const LeaveApplicationFormRequest = z.object({
   start_date: z.string().date().min(1, "Start Date is required"),
   end_date: z.string().date().min(1, "End Date is required"),
 });
+
+const approver = alias(users, 'approver');
 
 export async function getUserLeaves() {
   console.log("Fetching user leaves...");
@@ -26,6 +29,8 @@ export async function getUserLeaves() {
   const result = await db
     .select()
     .from(leave_applications)
+    .leftJoin(users, eq(leave_applications.userId, users.id))
+    .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
     .where(eq(leave_applications.userId, user.id));
 
   return result.length > 0 ? result : null;
