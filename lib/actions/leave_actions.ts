@@ -1,6 +1,6 @@
 "use server";
 
-import { desc, asc, and, eq, isNull } from "drizzle-orm";
+import { desc, asc, and, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/lib/db/drizzle";
 import { users, leave_applications } from "@/lib/db/schema";
 import { getUser } from "@/lib/db/queries";
@@ -95,7 +95,10 @@ export async function storeLeaveApplication(
   redirect("/dashboard/leaves");
 }
 
-export async function getMemberLeaveApplications() {
+export async function getMemberLeaveApplications(
+  page: number = 1,
+  limit: number = 5
+) {
   console.log("Fetching member leave applications...");
 
   const user = await getUser();
@@ -105,15 +108,39 @@ export async function getMemberLeaveApplications() {
 
   const status = "pending";
 
+  const offset = (page - 1) * limit;
+
   const result = await db
     .select()
     .from(leave_applications)
     .leftJoin(users, eq(leave_applications.userId, users.id))
     .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
     .where(and(eq(users.role, "member"), eq(leave_applications.status, status)))
+    .limit(limit)
+    .offset(offset)
     .orderBy(asc(leave_applications.createdAt));
 
-  return result.length > 0 ? result : null;
+  //   get total pages count for pagination
+  const totalCountQuery = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(leave_applications)
+    .leftJoin(users, eq(leave_applications.userId, users.id))
+    .where(
+      and(eq(users.role, "member"), eq(leave_applications.status, status))
+    );
+
+  const totalCount = totalCountQuery[0].count;
+
+  //   return result.length > 0 ? result : null;
+
+  return {
+    leave_applications_data: result,
+    totalCount: totalCount,
+    totalPages: Math.ceil(totalCount / limit),
+    currentPage: page,
+    hasNextPage: page * limit < totalCount,
+    hasPrevPage: page > 1,
+  };
 }
 
 export async function storeLeaveApproval(prevState: any, formData: FormData) {

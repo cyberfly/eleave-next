@@ -2,22 +2,37 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getMemberLeaveApplications } from "@/lib/actions/leave_actions";
 import { getUser } from "@/lib/db/queries";
 import Link from "next/link";
+import Pagination from "@/components/ui/pagination";
 
-export default async function LeaveApprovalsPage() {
+export default async function LeaveApprovalsPage(props) {
+  const { searchParams } = props;
+
+  const page = parseInt(searchParams.page || "1");
+  const limit = parseInt(searchParams.limit || "5");
+
+  // console.log('page:', page, 'limit:', limit);
+
   const user = await getUser();
 
   if (!user) {
-    return (<h3>User not found!</h3>);
+    return <h3>User not found!</h3>;
   }
 
-  const leave_applications_data = await getMemberLeaveApplications();
+  const {
+    leave_applications_data,
+    totalCount,
+    totalPages,
+    currentPage,
+    hasNextPage,
+    hasPrevPage,
+  } = await getMemberLeaveApplications(page, limit);
 
-  console.log("leave_applications_data:", leave_applications_data);
+  // console.log("leave_applications_data:", leave_applications_data);
 
   const allowed_roles = ["admin", "manager"];
 
   if (!allowed_roles.includes(user.role)) {
-    return (<h3>Not allowed!</h3>);
+    return <h3>Not allowed!</h3>;
   }
 
   return (
@@ -76,6 +91,20 @@ export default async function LeaveApprovalsPage() {
                 ))}
             </tbody>
           </table>
+
+          <div className="my-8">
+            {/* pagination */}
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              hasNextPage={hasNextPage}
+              hasPrevPage={hasPrevPage}
+              basePath="/dashboard/leave_approvals"
+            />
+
+            {/* end pagination */}
+          </div>
         </CardContent>
       </Card>
     </>
