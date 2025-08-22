@@ -2,14 +2,27 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 
-const protectedRoutes = '/dashboard';
+const protectedRouteList = [
+  '/dashboard',
+  '/dashboard/leaves',  
+  '/dashboard/leaves/apply',  
+  '/dashboard/leave_approvals',  
+];
+
+function isProtectedRoute(pathname: string): boolean {
+  return protectedRouteList.some(pattern => {
+    if (pattern.endsWith('/')) {
+      return pathname.startsWith(pattern);
+    }
+    return pathname === pattern || pathname.startsWith(pattern + '/');
+  });
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('session');
-  const isProtectedRoute = pathname.startsWith(protectedRoutes);
 
-  if (isProtectedRoute && !sessionCookie) {
+  if (isProtectedRoute(pathname) && !sessionCookie) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
