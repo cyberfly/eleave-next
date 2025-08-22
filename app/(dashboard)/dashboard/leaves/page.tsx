@@ -24,6 +24,8 @@ export default async function LeavesPage() {
                 <th>End Date</th>
                 <th>Status</th>
                 <th>Approval By</th>
+                <th>Approval Remark</th>
+                <th>Approval Date</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -37,7 +39,13 @@ export default async function LeavesPage() {
                     <td>{leave_row.leave_applications.start_date}</td>
                     <td>{leave_row.leave_applications.end_date}</td>
                     <td>{leave_row.leave_applications.status}</td>
-                    <td>{leave_row.approver?.name || '-'}</td>
+                    <td>{leave_row.approver?.name || "-"}</td>
+                    <td>{leave_row.leave_applications.remark}</td>
+                    <td>
+                      {new Date(
+                        leave_row.leave_applications.updatedAt
+                      ).toLocaleString()}
+                    </td>
                     <td></td>
                   </tr>
                 ))}
