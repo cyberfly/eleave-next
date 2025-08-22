@@ -95,9 +95,15 @@ export async function storeLeaveApplication(
   redirect("/dashboard/leaves");
 }
 
+type FiltersType = {
+  status?: string;
+  leave_type?: string;
+};
+
 export async function getMemberLeaveApplications(
   page: number = 1,
-  limit: number = 5
+  limit: number = 5,
+  filters: FiltersType = {}
 ) {
   console.log("Fetching member leave applications...");
 
@@ -106,7 +112,19 @@ export async function getMemberLeaveApplications(
     throw new Error("User not authenticated");
   }
 
-  const status = "pending";
+  const status = filters?.status || "pending";
+
+  const whereConditions: any[] = [];
+
+  whereConditions.push(eq(leave_applications.status, status));
+  whereConditions.push(eq(users.role, "member"));
+
+  if (filters?.leave_type) {
+    whereConditions.push(eq(leave_applications.leave_type, filters.leave_type));
+  }
+
+  const whereClause =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   const offset = (page - 1) * limit;
 
@@ -115,7 +133,7 @@ export async function getMemberLeaveApplications(
     .from(leave_applications)
     .leftJoin(users, eq(leave_applications.userId, users.id))
     .leftJoin(approver, eq(leave_applications.approvalBy, approver.id))
-    .where(and(eq(users.role, "member"), eq(leave_applications.status, status)))
+    .where(whereClause)
     .limit(limit)
     .offset(offset)
     .orderBy(asc(leave_applications.createdAt));
@@ -125,9 +143,7 @@ export async function getMemberLeaveApplications(
     .select({ count: sql<number>`count(*)` })
     .from(leave_applications)
     .leftJoin(users, eq(leave_applications.userId, users.id))
-    .where(
-      and(eq(users.role, "member"), eq(leave_applications.status, status))
-    );
+    .where(whereClause);
 
   const totalCount = totalCountQuery[0].count;
 

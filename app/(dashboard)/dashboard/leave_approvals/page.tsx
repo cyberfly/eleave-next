@@ -3,12 +3,21 @@ import { getMemberLeaveApplications } from "@/lib/actions/leave_actions";
 import { getUser } from "@/lib/db/queries";
 import Link from "next/link";
 import Pagination from "@/components/ui/pagination";
+import LeaveApprovalFilter from "@/components/leave-approval-filter";
 
 export default async function LeaveApprovalsPage(props) {
   const { searchParams } = props;
 
   const page = parseInt(searchParams.page || "1");
   const limit = parseInt(searchParams.limit || "5");
+  
+  const current_status = searchParams.current_status || "pending";
+  const leave_type = searchParams.leave_type || '';
+
+  const filters = {
+    status: current_status,
+    leave_type: leave_type,
+  }
 
   // console.log('page:', page, 'limit:', limit);
 
@@ -25,7 +34,7 @@ export default async function LeaveApprovalsPage(props) {
     currentPage,
     hasNextPage,
     hasPrevPage,
-  } = await getMemberLeaveApplications(page, limit);
+  } = await getMemberLeaveApplications(page, limit, filters);
 
   // console.log("leave_applications_data:", leave_applications_data);
 
@@ -40,6 +49,8 @@ export default async function LeaveApprovalsPage(props) {
       <h3 className="mb-8 text-2xl font-bold">
         Manage Leave Application Approvals
       </h3>
+
+      <LeaveApprovalFilter />
 
       <Card>
         <CardHeader>
