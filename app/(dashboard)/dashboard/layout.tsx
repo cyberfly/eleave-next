@@ -93,6 +93,8 @@ export default function DashboardLayout({
                 </Button>
               </Link>
             ))}
+
+            {user && (<div className="btn btn-info my-4">{user.role}</div>)}
           </nav>
         </aside>
 
