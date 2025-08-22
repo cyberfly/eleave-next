@@ -1,11 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getMemberLeaveApplications } from "@/lib/actions/leave_actions";
+import { getUser } from "@/lib/db/queries";
 import Link from "next/link";
 
 export default async function LeaveApprovalsPage() {
+  const user = await getUser();
+
+  if (!user) {
+    return (<h3>User not found!</h3>);
+  }
+
   const leave_applications_data = await getMemberLeaveApplications();
 
   console.log("leave_applications_data:", leave_applications_data);
+
+  const allowed_roles = ["admin", "manager"];
+
+  if (!allowed_roles.includes(user.role)) {
+    return (<h3>Not allowed!</h3>);
+  }
 
   return (
     <>
