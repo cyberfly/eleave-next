@@ -3,23 +3,28 @@ import { getMemberLeaveApplications } from "@/lib/actions/leave_actions";
 import { getUser } from "@/lib/db/queries";
 import Link from "next/link";
 import Pagination from "@/components/ui/pagination";
-import LeaveApprovalFilter from "@/components/leave-approval-filter";
+import LeaveApprovalFilterServer from "@/components/leave-approval-filter-server";
 
-export default async function LeaveApprovalsPage(props) {
+export default async function LeaveApprovalsPage(props: { searchParams: any; }) {
   const { searchParams } = props;
 
-  const page = parseInt(searchParams.page || "1");
-  const limit = parseInt(searchParams.limit || "5");
-  
-  const current_status = searchParams.current_status || "pending";
-  const leave_type = searchParams.leave_type || '';
+  const {
+    page = "1",
+    limit = "5",
+    status = "pending",
+    leave_type = "",
+  } = await searchParams;
+
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+
+  console.log("status:", status);
+  console.log("leave_type:", leave_type);
 
   const filters = {
-    status: current_status,
+    status: status,
     leave_type: leave_type,
-  }
-
-  // console.log('page:', page, 'limit:', limit);
+  };
 
   const user = await getUser();
 
@@ -34,7 +39,7 @@ export default async function LeaveApprovalsPage(props) {
     currentPage,
     hasNextPage,
     hasPrevPage,
-  } = await getMemberLeaveApplications(page, limit, filters);
+  } = await getMemberLeaveApplications(pageNum, limitNum, filters);
 
   // console.log("leave_applications_data:", leave_applications_data);
 
@@ -50,7 +55,7 @@ export default async function LeaveApprovalsPage(props) {
         Manage Leave Application Approvals
       </h3>
 
-      <LeaveApprovalFilter />
+      <LeaveApprovalFilterServer status={status} leave_type={leave_type} />
 
       <Card>
         <CardHeader>
